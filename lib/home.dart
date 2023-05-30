@@ -1,5 +1,6 @@
 import 'package:brain_tumor_final/home_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tflite/flutter_tflite.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as path;
@@ -17,6 +18,8 @@ class Home extends StatefulWidget {
 
 class _HomePageState extends State<Home> {
   File? _imageFile;
+  List? _outputs;
+  bool _loading= false;
 
   Future<void> _selectImageFromGallery() async {
     final imagePicker = ImagePicker();
@@ -24,9 +27,24 @@ class _HomePageState extends State<Home> {
 
     if (pickedImage != null) {
       setState(() {
+        _loading=true;
         _imageFile = File(pickedImage.path);
       });
     }
+    classifyImage(File(pickedImage!.path));
+  }
+  classifyImage(File _imageFile)async{
+    var output = await Tflite.runModelOnImage(
+        path: _imageFile.path,
+    numResults: 4,
+      threshold: 0.5,
+      imageMean: 127.5,
+      imageStd: 127.5,
+    );
+    setState(() {
+      _loading=false;
+      _outputs=output;
+    });
   }
 
   Future<void> _selectImageFromCamera() async {
@@ -86,6 +104,19 @@ class _HomePageState extends State<Home> {
       );
     }
   }
+  @override
+  void initState(){
+    super.initState();
+    _loading = true;
+    loadModel().then((value){
+      setState(() {
+        _loading=false;
+      });
+    }
+
+    );
+
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -132,6 +163,14 @@ class _HomePageState extends State<Home> {
                 width: 200,
               ),
               SizedBox(height: 16.0),
+_outputs!=null? Text("${_outputs?[0]["label"]}",
+  style: TextStyle(
+    color: Colors.black,fontSize: 24,
+
+  ),
+):
+
+              SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: _selectImageFromGallery,
                 child: Text('Select Image from Gallery'),
@@ -154,4 +193,15 @@ class _HomePageState extends State<Home> {
       ),
     ]);
   }
+  loadModel()async{
+   await Tflite.loadModel(
+        model: 'assets/converted_tflite/model_unquant.tflite',
+    labels: 'assets/converted_tflite/labels.txt',
+    );
+  }
+  void dispose(){
+    Tflite.close();
+    super.dispose();
+  }
+
 }

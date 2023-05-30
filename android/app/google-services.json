@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "730075104533",
+    "project_id": "braintumerapp",
+    "storage_bucket": "braintumerapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:730075104533:android:80281114f16416d26a951c",
+        "android_client_info": {
+          "package_name": "com.example.brain_tumor_final"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAYXeFFVLIOpLqJwCRBn3ZuJ4AxBNNYw0Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

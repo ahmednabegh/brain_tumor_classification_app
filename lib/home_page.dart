@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'package:brain_tumor_final/home.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
+//import 'package:pdf/pdf.dart';
+//import 'package:pdf/widgets.dart' as pw;
 
-import 'package:pdf/widgets.dart' as pw;
+//import 'package:pdf/widgets.dart' as pw;
 
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:printing/printing.dart';
+//import 'package:printing/printing.dart';
 import 'package:path/path.dart' as path;
 
 import 'dart:io';
@@ -313,43 +313,43 @@ class ReportPage extends StatelessWidget {
   });
   File? get _imageFile => imageFile;
 
-  void _printReport() async {
+  //void _printReport() async {
     // Generate the report as a string
-    String report = '''
-    Patient Name: $name
-    Contact Name: $contactName
-    Contact Age: $contactAge
-    Contact Gender: $contactGender
-    Contact Had Tumor Before: ${contactHadTumor == true ? 'Yes' : 'No'}
-    Contact Condition Description: $contactConditionDescription
-    MRI :$savedImage
-  ''';
+    //String report = '''
+    //Patient Name: $name
+    //Contact Name: $contactName
+    //Contact Age: $contactAge
+    //Contact Gender: $contactGender
+    //Contact Had Tumor Before: ${contactHadTumor == true ? 'Yes' : 'No'}
+    //Contact Condition Description: $contactConditionDescription
+    //MRI :$savedImage
+  //''';
 
-    try {
+    //try {
       // Create a PDF document
-      final pdf = pw.Document();
+      //final pdf = pw.Document();
 
       // Add a page to the document
-      pdf.addPage(
-        pw.Page(
-          build: (pw.Context context) {
-            return pw.Center(
-              child: pw.Text(report),
-            );
-          },
-        ),
-      );
+     // pdf.addPage(
+       // pw.Page(
+         // build: (pw.Context context) {
+           // return pw.Center(
+             // child: pw.Text(report),
+            //);
+          //},
+        //),
+      //);
 
       // Print the document
-      await Printing.layoutPdf(
-        onLayout: (PdfPageFormat format) async => pdf.save(),
-      );
+      //await Printing.layoutPdf(
+        //onLayout: (PdfPageFormat format) async => pdf.save(),
+      //);
 
-      print('Report printed successfully.');
-    } catch (e) {
-      print('Failed to print report: $e');
-    }
-  }
+      //print('Report printed successfully.');
+    //} catch (e) {
+      //print('Failed to print report: $e');
+    //}
+  //}
   void _shareReport() {
     // Generate the report as a string
     String report = '''
@@ -398,7 +398,9 @@ class ReportPage extends StatelessWidget {
         actions: [
           IconButton(
             icon: Icon(Icons.print),
-            onPressed: _printReport,
+            onPressed: (){
+
+            },
           ),
           IconButton(
             icon: Icon(Icons.share),

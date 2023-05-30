@@ -3,6 +3,8 @@ class Assets {
   Assets._();
 
   static const String assetsImage = 'assets/image';
+  static const String convertedTfliteLabels = 'assets/converted_tflite/labels.txt';
+  static const String convertedTfliteModelUnquant = 'assets/converted_tflite/model_unquant.tflite';
   static const String imagesBrain = 'assets/images/brain.jpg';
   static const String imagesCapture = 'assets/images/capture.png';
   static const String imagesDoctor = 'assets/images/Doctor.png';
