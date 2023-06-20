@@ -53,7 +53,7 @@ width: double.infinity,
         Scaffold(
           backgroundColor: Colors.transparent,
         appBar: AppBar(
-backgroundColor: Colors.transparent,
+       backgroundColor: Colors.transparent,
 
           title: Text('Login'),
         ),

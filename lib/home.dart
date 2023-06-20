@@ -1,4 +1,5 @@
 import 'package:brain_tumor_final/home_page.dart';
+import 'package:brain_tumor_final/report%20page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_tflite/flutter_tflite.dart';
 import 'dart:io';
@@ -20,6 +21,7 @@ class _HomePageState extends State<Home> {
   File? _imageFile;
   List? _outputs;
   bool _loading= false;
+  String? _tumorType;
 
   Future<void> _selectImageFromGallery() async {
     final imagePicker = ImagePicker();
@@ -27,26 +29,12 @@ class _HomePageState extends State<Home> {
 
     if (pickedImage != null) {
       setState(() {
-        _loading=true;
+        _loading = true;
         _imageFile = File(pickedImage.path);
+        _tumorType = null; // Reset tumor type to null
       });
     }
-    classifyImage(File(pickedImage!.path));
   }
-  classifyImage(File _imageFile)async{
-    var output = await Tflite.runModelOnImage(
-        path: _imageFile.path,
-    numResults: 4,
-      threshold: 0.5,
-      imageMean: 127.5,
-      imageStd: 127.5,
-    );
-    setState(() {
-      _loading=false;
-      _outputs=output;
-    });
-  }
-
   Future<void> _selectImageFromCamera() async {
     final imagePicker = ImagePicker();
     final pickedImage = await imagePicker.pickImage(source: ImageSource.camera);
@@ -54,8 +42,28 @@ class _HomePageState extends State<Home> {
     if (pickedImage != null) {
       setState(() {
         _imageFile = File(pickedImage.path);
+        _tumorType = null; // Reset tumor type to null
       });
     }
+  }
+
+  classifyImage(File _imageFile) async {
+    var output = await Tflite.runModelOnImage(
+      path: _imageFile.path,
+      numResults: 4,
+      threshold: 0.5,
+      imageMean: 127.5,
+      imageStd: 127.5,
+    );
+    setState(() {
+      _loading = false;
+      _outputs = output;
+      if (_outputs != null && _outputs!.isNotEmpty) {
+        _tumorType = _outputs![0]["label"];
+      } else {
+        _tumorType = '';
+      }
+    });
   }
 
   @override
@@ -143,7 +151,8 @@ class _HomePageState extends State<Home> {
         body:
 
         Center(
-          child: Column(
+          child:
+          Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
@@ -163,13 +172,15 @@ class _HomePageState extends State<Home> {
                 width: 200,
               ),
               SizedBox(height: 16.0),
-_outputs!=null? Text("${_outputs?[0]["label"]}",
-  style: TextStyle(
-    color: Colors.black,fontSize: 24,
-
-  ),
-):
-
+              _outputs != null && _outputs!.isNotEmpty
+                  ? Text(
+                _tumorType != null ? 'Tumor type: $_tumorType' : '',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 24,
+                ),
+              )
+                  : SizedBox(),
               SizedBox(height: 16.0),
               ElevatedButton(
                 onPressed: _selectImageFromGallery,
@@ -180,8 +191,36 @@ _outputs!=null? Text("${_outputs?[0]["label"]}",
                 onPressed: _selectImageFromCamera,
                 child: Text('Take Photo'),
               ),
-              ElevatedButton(onPressed: (){},
-                  child: Text('Classify')),
+              ElevatedButton(
+                onPressed: () {
+                  if (_imageFile != null) {
+                    setState(() {
+                      _loading = true;
+                      _tumorType = ''; // Clear the tumor type before classification
+                    });
+                    classifyImage(_imageFile!);
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text('No Image Selected'),
+                          content: Text('Please select an image first.'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  }
+                },
+                child: Text('Classify'),
+              ),
               SizedBox(height: 8.0),
               ElevatedButton(
                 onPressed: _saveImageAndNavigateToReportPage,

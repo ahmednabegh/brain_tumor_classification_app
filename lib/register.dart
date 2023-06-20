@@ -24,19 +24,15 @@ class _RegistrationPageState extends State<RegistrationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children:[
-        Image.asset('assets/images/register_background.png',
-
+    return Stack(children: [
+      Image.asset(
+        'assets/images/register_background.png',
         width: double.infinity,
-          height: double.infinity,
-          fit: BoxFit.fill,
-        ),
-
-
-        Scaffold(
-          backgroundColor: Colors.transparent,
-
+        height: double.infinity,
+        fit: BoxFit.fill,
+      ),
+      Scaffold(
+        backgroundColor: Colors.transparent,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           title: Text('Registration'),
@@ -51,46 +47,31 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   controller: nameController,
                   decoration: InputDecoration(
                     labelText: 'Name',
-                    labelStyle: TextStyle(
-                        fontSize: 25,
-                        color: Colors.white),
+                    labelStyle: TextStyle(fontSize: 25, color: Colors.white),
                     enabledBorder: UnderlineInputBorder(
                       borderSide: BorderSide(color: Colors.white),
-                    ), focusedBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    hintStyle: TextStyle(color: Colors.white),
                   ),
-    hintStyle: TextStyle(color: Colors.white),
-    ),
-              style: TextStyle(
-                  fontSize: 20,
-                  color: Colors.white),
-            ),
-
-
-
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ),
                 SizedBox(height: 16.0),
                 TextField(
                   controller: emailController,
                   decoration: InputDecoration(
                     labelText: 'Email',
-                    labelStyle: TextStyle(
-                      fontSize: 25,
-                      color: Colors.white
-                    ),
+                    labelStyle: TextStyle(fontSize: 25, color: Colors.white),
                     enabledBorder: UnderlineInputBorder(
-borderSide: BorderSide(color: Colors.white)
-                    ),
+                        borderSide: BorderSide(color: Colors.white)),
                     focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white)
-                    ),
-hintStyle: TextStyle(color: Colors.white),
-
-
+                        borderSide: BorderSide(color: Colors.white)),
+                    hintStyle: TextStyle(color: Colors.white),
                     errorText: _isEmailValid ? null : 'Invalid email',
-
-                  ),style: TextStyle(
-                    fontSize: 20,
-                    color: Colors.white),
+                  ),
+                  style: TextStyle(fontSize: 20, color: Colors.white),
                   onChanged: (value) {
                     setState(() {
                       // Validate the email using a regular expression
@@ -106,22 +87,17 @@ hintStyle: TextStyle(color: Colors.white),
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Password',
-    labelStyle: TextStyle(
-    fontSize: 25,
-    color: Colors.white),
-    enabledBorder: UnderlineInputBorder(
-    borderSide: BorderSide(color: Colors.white),
-    ), focusedBorder: UnderlineInputBorder(
-    borderSide: BorderSide(color: Colors.white),
-    ),
-    hintStyle: TextStyle(color: Colors.white),
-    ),
-    style: TextStyle(
-        fontSize:20,
-        color: Colors.white),
-
+                    labelStyle: TextStyle(fontSize: 25, color: Colors.white),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                    ),
+                    hintStyle: TextStyle(color: Colors.white),
                   ),
-
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ),
                 SizedBox(height: 24.0),
                 ElevatedButton(
                   onPressed: () async {
