@@ -1,44 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:convert';
-import 'package:brain_tumor_final/contact_info.dart';
-import 'package:brain_tumor_final/home.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-//import 'package:printing/printing.dart';
 import 'package:path/path.dart' as path;
 
 import 'dart:io';
 
-import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:share/share.dart';
 
 class ReportPage extends StatelessWidget {
-  Future<Uint8List> generatePdf() async {
-    // Create a PDF document
-    final pdf = pw.Document();
-
-    // Add a page to the document
-    pdf.addPage(
-      pw.Page(
-        build: (pw.Context context) {
-          return pw.Center(
-            child: pw.Text('Hello, World!'),
-          );
-        },
-      ),
-    );
-
-    // Generate the PDF document as bytes
-    return await pdf.save();
-  }
-
   static File? savedImage;
   final File? imageFile;
   final String name;
@@ -57,56 +30,26 @@ class ReportPage extends StatelessWidget {
     required this.contactHadTumor,
     required this.contactConditionDescription,
   });
-  File? get _imageFile => imageFile;
 
-  /*//void _printReport() async {
-    // Generate the report as a string
-    //String report = '''
-    //Patient Name: $name
-    //Contact Name: $contactName
-    //Contact Age: $contactAge
-    //Contact Gender: $contactGender
-    //Contact Had Tumor Before: ${contactHadTumor == true ? 'Yes' : 'No'}
-    //Contact Condition Description: $contactConditionDescription
-    //MRI :$savedImage
-  //''';
+  Future<Uint8List> _loadImage() async {
+    if (savedImage != null) {
+      return await savedImage!.readAsBytes();
+    }
+    return Uint8List(0);
+  }
 
-    //try {
-      // Create a PDF document
-      //final pdf = pw.Document();
-
-      // Add a page to the document
-     // pdf.addPage(
-       // pw.Page(
-         // build: (pw.Context context) {
-           // return pw.Center(
-             // child: pw.Text(report),
-            //);
-          //},
-        //),
-      //);
-
-      // Print the document
-      //await Printing.layoutPdf(
-        //onLayout: (PdfPageFormat format) async => pdf.save(),
-      //);
-
-      //print('Report printed successfully.');
-    //} catch (e) {
-      //print('Failed to print report: $e');
-    //}
-  //}
-
-   */
   void _shareReport() async {
+    final Uint8List imageData = await _loadImage();
+    final MemoryImage image = MemoryImage(imageData);
+
     // Generate the report as a string
     String report = '''
     Doctor Name: $name
-    patient Name: $contactName
-    patient Age: $contactAge
-    patient Gender: $contactGender
-    patient Had Tumor Before: ${contactHadTumor == true ? 'Yes' : 'No'}
-    patient Condition Description: $contactConditionDescription
+    Patient Name: $contactName
+    Patient Age: $contactAge
+    Patient Gender: $contactGender
+    Patient Had Tumor Before: ${contactHadTumor == true ? 'Yes' : 'No'}
+    Patient Condition Description: $contactConditionDescription
   ''';
 
     // Create a PDF document
@@ -115,7 +58,13 @@ class ReportPage extends StatelessWidget {
       pw.Page(
         build: (pw.Context context) {
           return pw.Center(
-            child: pw.Text(report),
+            child: pw.Column(
+              children: [
+                pw.Text(report, style: pw.TextStyle(fontSize: 18)),
+                pw.SizedBox(height: 16),
+                pw.Image(pw.MemoryImage(imageData), width: 200, height: 200),
+              ],
+            ),
           );
         },
       ),
@@ -140,28 +89,6 @@ class ReportPage extends StatelessWidget {
     );
   }
 
-  void _launchURL() async {
-    // Generate the report as a string
-    String report = '''
-      Doctor Name: $name
-      patient Name: $contactName
-      patient Age: $contactAge
-      patient Gender: $contactGender
-      patient Had Tumor Before: ${contactHadTumor == true ? 'Yes' : 'No'}
-      patient Condition Description: $contactConditionDescription
-    ''';
-
-    // Generate a data URI with the report
-    final uri =
-        'data:text/plain;charset=utf-8;base64,' + base64Encode(report.codeUnits);
-
-    // Launch the URL using the url_launcher plugin
-    if (await canLaunch(uri)) {
-      await launch(uri);
-    } else {
-      throw 'Could not launch URL: $uri';
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -170,12 +97,6 @@ class ReportPage extends StatelessWidget {
         backgroundColor: Color(0xFF2856C0),
         title: Text('Report'),
         actions: [
-          IconButton(
-            icon: Icon(Icons.print),
-            onPressed: (){
-
-            },
-          ),
           IconButton(
             icon: Icon(Icons.share),
             onPressed: _shareReport,
@@ -197,43 +118,51 @@ class ReportPage extends StatelessWidget {
             ),
             SizedBox(height: 8.0),
             Text(
-              'patient Name: $contactName',
+              'Patient Name: $contactName',
               style: TextStyle(fontSize: 18.0),
             ),
             SizedBox(height: 8.0),
             Text(
-              'patient Age: $contactAge',
+              'Patient Age: $contactAge',
               style: TextStyle(fontSize: 18.0),
             ),
             SizedBox(height: 8.0),
             Text(
-              'patient Gender: $contactGender',
+              'Patient Gender: $contactGender',
               style: TextStyle(fontSize: 18.0),
             ),
             SizedBox(height: 8.0),
             Text(
-              'patient Had Tumor Before: ${contactHadTumor == true ? 'Yes' : 'No'}',
+              'Patient Had Tumor Before: ${contactHadTumor == true ? 'Yes' : 'No'}',
               style: TextStyle(fontSize: 18.0),
             ),
             SizedBox(height: 8.0),
             Text(
-              'patient Condition Description: $contactConditionDescription',
+              'Patient Condition Description: $contactConditionDescription',
               style: TextStyle(fontSize: 18.0),
             ),
             SizedBox(height: 16.0),
-            Text('MRI :',
+            Text(
+              'MRI :',
               style: TextStyle(fontSize: 18.0),
             ),
-            savedImage != null
-                ? Image.file(
-              savedImage!,
-              height: 200,
-              width: 200,
-            )
-                : Image.asset(
-              'assets/images/capture.png',
-              height: 200,
-              width: 200,
+            FutureBuilder<Uint8List>(
+              future: _loadImage(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Image.memory(
+                    snapshot.data!,
+                    height: 200,
+                    width: 200,
+                  );
+                } else {
+                  return Image.asset(
+                    'assets/images/capture.png',
+                    height: 200,
+                    width: 200,
+                  );
+                }
+              },
             ),
           ],
         ),
